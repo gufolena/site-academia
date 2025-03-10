@@ -1,73 +1,48 @@
-// This is the "Offline page" service worker
+const staticDevSejaFit = "dev-seja-fit-site-v1"
+const assets = [
+  "/",
+  "/index.html",
+  "/main.css",
+  "/main.js",
+  "/img/home2.jpg",
+  "/img/home1.jpg",
+  "/img/musculosa1.jpg",
+  "/img/sobre.jpeg",
+  "/img/casal na academia.jpg",
+  "/img/man-2604149_1920.jpg",
+  "/img/personal1.jpeg",
+  "/img/Personalmulher1.jpeg",
+  "/img/personal2.jpeg",
+  "/img/Personalmulher2.jpeg",
+  "/img/post1 (4).jpeg",
+  "/img/post1 (7).jpeg",
+  "/img/Atleta feminina com halteres na academia _ Foto Premium.jpeg",
+  "/img/post3.jpeg",
+  "/img/post4.jpeg",
+  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css",
+  "https://unpkg.com/swiper@7/swiper-bundle.min.css",
+  "https://unpkg.com/swiper@7/swiper-bundle.min.js",
+  "https://i.postimg.cc/J46txFdD/icon-1.png",
+  "https://i.postimg.cc/5N3KRBwF/icon-2.png",
+  "https://i.postimg.cc/pTjkP83x/icon-3.png",
+  "https://i.postimg.cc/4xhDF81N/pic-1.png",
+  "https://i.postimg.cc/ry7XCXSY/pic-2.png",
+  "https://i.postimg.cc/7ZxBSmQW/pic-3.png",
+  "https://i.postimg.cc/8zjv8vFC/pic-4.png",
+]
 
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
-
-const CACHE_NAME = 'academia-fit-cache-v1';
-const OFFLINE_FALLBACK_PAGE = 'index.html'; // Substitua pelo nome correto da sua página offline
-
-const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/home.css',
-  '/home.js',
-  '/manifest.json',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
-  '/offline.html' // Adicione a página offline à lista de recursos estáticos
-];
-
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
-});
-
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log('Opened cache');
-      return cache.addAll(STATIC_ASSETS);
+self.addEventListener("install", installEvent => {
+  installEvent.waitUntil(
+    caches.open(staticDevSejaFit).then(cache => {
+      cache.addAll(assets)
     })
-  );
-});
+  )
+})
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Clearing old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-          return null;
-        })
-      );
+self.addEventListener("fetch", fetchEvent => {
+  fetchEvent.respondWith(
+    caches.match(fetchEvent.request).then(res => {
+      return res || fetch(fetchEvent.request)
     })
-  );
-});
-
-self.addEventListener('fetch', (event) => {
-  if (event.request.mode === 'navigate') {
-    event.respondWith((async () => {
-      try {
-        const preloadResp = await event.preloadResponse;
-        if (preloadResp) {
-          return preloadResp;
-        }
-        const networkResp = await fetch(event.request);
-        return networkResp;
-      } catch (error) {
-        const cache = await caches.open(CACHE_NAME);
-        const cachedResp = await cache.match(OFFLINE_FALLBACK_PAGE);
-        return cachedResp;
-      }
-    })());
-  } else {
-    event.respondWith(
-      caches.match(event.request).then((response) => {
-        return response || fetch(event.request);
-      })
-    );
-  }
-});
+  )
+})
