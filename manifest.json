@@ -1,8 +1,22 @@
 {
-  "name": "academia",
-  "theme_color": "#000000",
-  "background_color": "#000000",
-  "short_name": "academia",
-  "id": "1",
-  "description": "aa"
+  "name": "Academia Fit",  
+  "short_name": "Academia Fit",  
+  "icons": [
+    {
+      "src": "/icons/academia.png",  
+      "type": "image/png",  
+      "sizes": "192x192"  
+    },
+    {
+      "src": "/icons/academia.png",  
+      "type": "image/png",  
+      "sizes": "512x512"  
+    }
+  ],
+  "start_url": "/index.html",  
+  "display": "standalone",  
+  "background_color": "#ffffff",  
+  "theme_color": "#007bff",  
+  "description": "Aplicativo para gerenciar seus treinos e dieta na Academia Fit", 
+  "orientation": "portrait" 
 }
